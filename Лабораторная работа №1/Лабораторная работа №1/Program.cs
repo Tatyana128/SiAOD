@@ -1,4 +1,6 @@
-﻿using System;
+
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 
@@ -7,9 +9,18 @@ namespace Лабораторная_работа__1
     class Program
     {
         static void Main(string[] args)
-        {        
+        {
+            AA();
+            Console.ReadLine();
+
+
+        }
+
+
+        static void AA()
+        {
             //Выбор сортировки
-            Console.Write("1. Сортировка выбором" + "\r\n" + "2. Сортировка вставками" + "\r\n" + "3. Сортировка обменом" + "\r\n" + "4. Сортировка Шелла" + "\r\n" + "5. Сортировка быстрая" + "\r\n" + "6. Сортировка встроенная" +"\r\n"+"Выберите вид сортировки:");
+            Console.Write("1. Сортировка выбором" + "\r\n" + "2. Сортировка вставками" + "\r\n" + "3. Сортировка обменом" + "\r\n" + "4. Сортировка Шелла" + "\r\n" + "5. Сортировка быстрая" + "\r\n" + "6. Сортировка встроенная" + "\r\n" + "7. Сортировка пирамидальная" + "\r\n" + "8. Турнирная сортировка" + "\r\n" + "Выберите вид сортировки:");
 
             //Генерация матрицы
             int[,] FirstMatrix = CreateMatrix();
@@ -66,26 +77,65 @@ namespace Лабораторная_работа__1
                         }
                     }
                     break;
+                case 8:
+                    timer = Stopwatch.StartNew();
+                    for (int i = 0; i < MatrixSize; i++)
+                    {
+                        timer.Start();
+                        int[] MyArray = new int[MatrixSize];
+                        for (int j = 0; j < MatrixSize; j++)
+                        {
+                            MyArray[j] = FirstMatrix[i, j];
+                        }
+                        TornSort(ref MyArray);
+                        timer.Stop();
+                        for (int j = 0; j < MatrixSize; j++)
+                        {
+                            FirstMatrix[i, j] = MyArray[j];
+                        }
+                    }
+                    break;
+                case 7:
+                    timer = Stopwatch.StartNew();
+                    for (int i = 0; i < MatrixSize; i++)
+                    {
+                        List<int> array = new List<int>(MatrixSize);
+                        for (int j = 0; j < MatrixSize; j++)
+                        {
+                            array.Add(FirstMatrix[i, j]);
+                        }
+                        Heap MyHeap = new Heap(array);
+                        foreach (int a in MyHeap)
+                        {
+                            Console.Write(a + " ");
+                        }
+                        Console.Write("\r\n");
+
+                    }
+                    //Console.WriteLine("Время сортировки = " + Convert.ToString(timer.ElapsedMilliseconds) + " мс");
+                    return;
+                    
             }
 
             //Вывод времени сортировки
-            Console.WriteLine("Время сортировки = "+Convert.ToString(timer.ElapsedMilliseconds)+" мс");
+            Console.WriteLine("Время сортировки = " + Convert.ToString(timer.ElapsedMilliseconds) + " мс");
 
             //Вывод отсортированной матрицы
             for (int i = 0; i < MatrixSize; i++)
             {
                 for (int j = 0; j < MatrixSize; j++)
                 {
-                    Console.Write(Convert.ToString(FirstMatrix[i, j]+" "));
+                    Console.Write(Convert.ToString(FirstMatrix[i, j] + " "));
                 }
                 Console.Write("\r\n");
             }
 
             Console.ReadLine();
-
         }
 
-        static int MatrixSize = 100;
+
+
+        static int MatrixSize = 10;
         #region Генерация матрицы
         static int[,] CreateMatrix()
         {
@@ -235,6 +285,50 @@ namespace Лабораторная_работа__1
         }
 
 
-        #endregion
+
+        static int[] heapify(ref int[] arr,int n,int k)
+        {
+            int m = k;
+            int left = 2 * k;
+            int right = 2 * k + 1;
+            if(left<n && arr[m] < arr[left])
+            {
+                m = left;
+            }
+            if(right< n && arr[m] < arr[right])
+            {
+                m = right;
+            }
+            if (m != k)
+            {
+                int temp = arr[k];
+                arr[k] = arr[m];
+                arr[m] = temp;
+                heapify(ref arr, n, m);
+            }
+            return arr;
+        }
+
+        static int[] TornSort(ref int[] arr)
+        {
+            for(int i = arr.Length / 2; i > -1; i--)
+            {
+                heapify(ref arr, arr.Length, i);
+            }
+            for(int i = arr.Length -1; i > -1; i--)
+            {
+                if (arr[0] > arr[i])
+                {
+                    int temp = arr[0];
+                    arr[0] = arr[i];
+                    arr[i] = temp;
+                    heapify(ref arr, i, 0);
+                }
+            }
+            return arr;
+        }
+
+
+#endregion
     }
 }
